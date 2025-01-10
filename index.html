@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Map with Multiple Icons</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 90vh; /* Výška mapy */
+      width: 100%;  /* Šířka mapy */
+    }
+    #controls {
+      height: 5vh; /* Výška ovládacího prvku */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f4f4f4;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+#coordinates {
+      background: white;
+      padding: 10px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 999;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+ <div id="coordinates">Poloha myši: </div>
+  <div id="controls">
+    <button id="toggleMap">Přepnout mapu</button>
+  </div>
+
+  <script>
+    // Inicializace mapy
+    const map = L.map('map', {
+      center: [0, 0],
+      zoom: 0,
+      crs: L.CRS.Simple
+    });
+
+    // Rozměry map
+    const imageWidth = 9600;
+    const imageHeight = 4555;
+    const bounds = [[0, 0], [imageHeight, imageWidth]];
+
+    // Vrstvy map (dvě různé mapy)
+    const map1 = L.imageOverlay('Morvelion_clear_location.jpeg', bounds);
+    const map2 = L.imageOverlay('Morvelion_states.png', bounds);
+
+    // Přidání první mapy jako výchozí
+    map1.addTo(map);
+    map.fitBounds(bounds);
+
+     function addMarker(lat, lon, iconUrl, popupText) {
+    const icon = L.icon({
+      iconUrl: iconUrl, // Cesta k ikoně
+      iconSize: [40, 40],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -64]
+    });
+
+    L.marker([lat, lon], { icon: icon })
+      .addTo(map)
+      .bindPopup(popupText);
+  }
+
+  // Použití funkce pro přidání markerů
+  addMarker(3389, 5874, 'Stínový_kruh_icon.jpg', 'Stínový kruh');
+  addMarker(3400, 5000, 'Levova_skála_icon.jpg', 'Levova skála');
+  addMarker(3600, 5080, 'Chrámy_přírody_icon.jpg', 'Chrámy přírody');
+  addMarker(3200, 5080, 'Chrámy_přírody_icon.jpg', 'Chrámy přírody');
+  addMarker(3275, 7000, 'Chrámy_přírody_icon.jpg', 'Chrámy přírody');
+  addMarker(3227, 3468, 'Citadela_Stínů_icon.jpg', 'Citadela Stínů');
+  addMarker(3315, 4622, 'Krvavý_oltář_icon.jpg', 'Krvavý oltář');
+  addMarker(2835, 3304, 'Hlubiny_Paktu_icon.jpg', 'Hlubiny Paktu');
+  addMarker(2747, 4712, 'Hlubiny_Paktu_icon.jpg', 'Hlubiny Paktu');
+  addMarker(3171, 4124, 'Hlubiny_Paktu_icon.jpg', 'Hlubiny Paktu');
+  addMarker(2491, 2265, 'Knihovna_Rovnováhy_icon.jpg', 'Knihovna Rovnováhy');
+  addMarker(3659, 2168, 'Stříd_Temnoty_a_Světla_icon.jpg', 'Stříd Temnoty a Světla');
+  addMarker(2763, 2408, 'Zahrady_Harmonie_icon.jpg', 'Zahrady Harmonie');
+  addMarker(2439, 3745, 'Chrám_Třpytící_se_Koruny_icon.jpg', 'Chrám Třpytící se Koruny');
+  addMarker(2627, 4260, 'Jezero_Spojení_icon.jpg', 'Jezero Spojení');
+  addMarker(2463, 5020, 'Kamenné_kruhy_Matky_icon.jpg', 'Kamenné kruhy Matky');
+  addMarker(2227, 4244, 'Kamenné_kruhy_Matky_icon.jpg', 'Kamenné kruhy Matky');
+  addMarker(2731, 3696, 'Kamenné_kruhy_Matky_icon.jpg', 'Kamenné kruhy Matky');
+  addMarker(1575, 1996, 'Prastarý_Háj_icon.jpg', 'Prastarý Háj');
+  addMarker(1947, 1160, 'Kamenný_Kruh_Rovnováhy_icon.jpg', 'Kamenný Kruh Rovnováhy');
+  addMarker(1823, 1620, 'Kamenný_Kruh_Rovnováhy_icon.jpg', 'Kamenný Kruh Rovnováhy');
+  addMarker(1575, 1424, 'Kamenný_Kruh_Rovnováhy_icon.jpg', 'Kamenný Kruh Rovnováhy');
+  addMarker(1255, 2420, 'Kamenný_Kruh_Rovnováhy_icon.jpg', 'Kamenný Kruh Rovnováhy');
+  addMarker(955, 2368, 'Kamenný_Kruh_Rovnováhy_icon.jpg', 'Kamenný Kruh Rovnováhy');
+  addMarker(1771, 1356, 'Zpívající_Jeskyně_icon.jpg', 'Zpívající Jeskyně:');
+  addMarker(1563, 1804, 'Zpívající_Jeskyně_icon.jpg', 'Zpívající Jeskyně:');
+  addMarker(1307, 1996, 'Zpívající_Jeskyně_icon.jpg', 'Zpívající Jeskyně:');
+  addMarker(1087, 2532, 'Zpívající_Jeskyně_icon.jpg', 'Zpívající Jeskyně:');
+  addMarker(1645, 5678, 'Chrám_Záře_icon.jpg', 'Chrám Záře');
+  addMarker(655, 6020, 'Sluneční_Ostrov_icon.jpg', 'Sluneční Ostrov');
+  addMarker(1011, 4652, 'Zlatá_Brána_Monument_icon.jpg', 'Zlatá Brána');
+  addMarker(1628, 6754, 'haj_tisice_mysli_icon.jpg', 'Háj Tichých Myslí');
+  addMarker(1471, 6952, 'Bazinne_Prameny_icon.jpg', 'Bažinné Prameny:');
+  addMarker(1405, 6753, 'Věž_Starého_Dubu_icon.jpg', 'Věž Starého Dubu');
+  addMarker(1630, 7431, 'Kamenné_Kruhavy_icon.jpg', 'Kamenné Kruhavy');
+  addMarker(1491, 7799, 'Kamenné_Kruhavy_icon.jpg', 'Kamenné Kruhavy');
+  addMarker(1522, 7535, 'Kamenné_Kruhavy_icon.jpg', 'Kamenné Kruhavy');
+  addMarker(1393, 7356, 'Kamenné_Kruhavy_icon.jpg', 'Kamenné Kruhavy');
+  addMarker(1211, 7866, 'Bažinné_Hvozd_icon.jpg', 'Bažinné Hvozdy');
+  addMarker(1603, 7518, 'Bažinné_Hvozd_icon.jpg', 'Bažinné Hvozdy');
+  addMarker(1411, 7322, 'Bažinné_Hvozd_icon.jpg', 'Bažinné Hvozdy');
+  addMarker(1339, 7556, 'Pramen_Světlosti_icon.jpg', 'Pramen Světlosti');
+  addMarker(2420, 7054, 'Chrám_Stříbrné_Záře_icon.jpg', 'Chrám Stříbrné Záře');
+  addMarker(655, 6020, 'Zlatá_Brána_Monument_icon.jpg', 'Zlatá Brána');
+  addMarker(2572, 5944, 'Stříbrné_Doly_icon.jpg', 'Stříbrné Doly');
+  addMarker(2284, 6000, 'Stříbrné_Doly_icon.jpg', 'Stříbrné Doly');
+  addMarker(2000, 6100, 'Stříbrné_Doly_icon.jpg', 'Stříbrné Doly');
+  addMarker(1940, 5944, 'Stříbrné_Doly_icon.jpg', 'Stříbrné Doly');
+  addMarker(2712, 5940, 'Stříbrné_Doly_icon.jpg', 'Stříbrné Doly');
+  addMarker(2940, 7408, 'Měsíční_Fontána_icon.jpg', 'Měsíční Fontána');
+
+
+    
+    // Nastavení omezení zoomu
+    map.setMinZoom(-1.5); // Povolit oddálení více než výchozí úroveň
+    map.setMaxZoom(2);  // Povolit přiblížení na maximální úroveň
+
+    // Přepnutí mapy
+    let isMap1Active = true;
+    document.getElementById('toggleMap').addEventListener('click', () => {
+      if (isMap1Active) {
+        map.removeLayer(map1); // Odebrání mapy 1
+        map2.addTo(map);       // Přidání mapy 2
+      } else {
+        map.removeLayer(map2); // Odebrání mapy 2
+        map1.addTo(map);       // Přidání mapy 1
+      }
+      isMap1Active = !isMap1Active;
+    });
+
+  // Funkce pro zobrazení pozice myši
+    map.on('mousemove', function(event) {
+      const latlng = event.latlng;  // Získání souřadnic
+      document.getElementById('coordinates').innerHTML = `Poloha myši: Lat: ${latlng.lat.toFixed(2)} | Lng: ${latlng.lng.toFixed(2)}`;
+    });
+  </script>
+</body>
+</html>
