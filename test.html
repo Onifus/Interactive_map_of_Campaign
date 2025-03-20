@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Map with Multiple Icons</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    #map {
+      height: 90vh; /* Výška mapy */
+      width: 100%;  /* Šířka mapy */
+    }
+    #controls {
+      height: 5vh; /* Výška ovládacího prvku */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f4f4f4;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+	#coordinates {
+      background: white;
+      padding: 10px;
+      position: absolute;
+      top: 10px;
+      left: 50px;
+      z-index: 999;
+      font-size: 14px;
+    }
+    #menu {
+      position: absolute;
+      top: 50px;
+      right: 10px;
+      background: white;
+      padding: 10px;
+      border: 1px solid #ccc;
+      z-index: 999;
+      width: 200px;
+    }
+    #menu h3 {
+      margin: 0 0 10px;
+    }
+    #menu label {
+      display: block;
+      margin: 5px 0;
+    }
+	.filter{
+	padding-top:50px;
+	}
+  </style>
+</head>
+<body>
+	<div id="coordinates">Poloha myši: Lat: 0.00 | Lng: 0.00</div>
+  <div id="map"></div>
+  <div id="menu">
+    <label><input type="checkbox" class="filter" data-category="NabozenskaMista"> Náboženská místa</label>
+  </div>
+  <div id="controls">
+    <button id="toggleMap">Přepnout mapu</button>
+  </div>
+
+  <script>
+    // Inicializace mapy
+    const map = L.map('map', {
+      center: [0, 0],
+      zoom: 0,
+      crs: L.CRS.Simple
+    });
+
+    // Rozměry map
+    const imageWidth = 9600;
+    const imageHeight = 4555;
+    const bounds = [[0, 0], [imageHeight, imageWidth]];
+
+    // Vrstvy map (dvě různé mapy)
+    const map1 = L.imageOverlay('Morvelion_clear_location.jpeg', bounds);
+    const map2 = L.imageOverlay('Morvelion_states.png', bounds);
+
+    // Přidání první mapy jako výchozí
+    map1.addTo(map);
+    map.fitBounds(bounds);
+
+     function addMarker(lat, lon, iconUrl, popupText) {
+    const icon = L.icon({
+      iconUrl: iconUrl, // Cesta k ikoně
+      iconSize: [40, 40],
+      iconAnchor: [12, 16],
+      popupAnchor: [0, -20]
+    });
+
+    L.marker([lat, lon], { icon: icon })
+      .addTo(map)
+      .bindPopup(popupText);
+  }
+
+     const markers = [];
+    const markerData = [
+      { lat: 3389, lon: 5874, icon: './Icons/nabozenske/Stinovy_kruh_icon.jpg', category: 'NabozenskaMista', popup: '<a href="https://www.w3schools.com">Stínový kruh</a>' },
+      { lat: 3400, lon: 5000, icon: './Icons/nabozenske/Levova_skala_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Levova skála</a>' },
+      { lat: 3600, lon: 5080, icon: './Icons/nabozenske/Chramy_prirody_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Chrámy přírody</a>' },
+      { lat: 3200, lon: 5080, icon: './Icons/nabozenske/Chramy_prirody_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Chrámy přírody</a>' },
+      { lat: 3275, lon: 7000, icon: './Icons/nabozenske/Chramy_prirody_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Chrámy přírody</a>' },
+      { lat: 3227, lon: 3468, icon: './Icons/nabozenske/Citadela_Stinu_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Citadela Stínů</a>' },
+      { lat: 3315, lon: 4622, icon: './Icons/nabozenske/Krvavy_oltar_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Krvavý oltář</a>' },
+      { lat: 2835, lon: 3304, icon: './Icons/nabozenske/Hlubiny_Paktu_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Hlubiny Paktu</a>' },
+      { lat: 2747, lon: 4712, icon: './Icons/nabozenske/Hlubiny_Paktu_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Hlubiny Paktu</a>' },
+      { lat: 3171, lon: 4124, icon: './Icons/nabozenske/Hlubiny_Paktu_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Hlubiny Paktu</a>' },
+      { lat: 2491, lon: 2265, icon: './Icons/nabozenske/Knihovna_Rovnovahy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Knihovna Rovnováhy</a>' },
+      { lat: 3659, lon: 2168, icon: './Icons/nabozenske/Strid_Temnoty_a_Svetla_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Stříd Temnoty a Světla</a>' },
+      { lat: 2763, lon: 2408, icon: './Icons/nabozenske/Zahrady_Harmonie_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Zahrady Harmonie</a>' },
+      { lat: 2439, lon: 3745, icon: './Icons/nabozenske/Chram_Trpytici_se_Koruny_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Chrám Třpytící se Koruny</a>' },
+      { lat: 2627, lon: 4260, icon: './Icons/nabozenske/Jezero_Spojeni_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Jezero Spojení</a>' },
+      { lat: 2463, lon: 5020, icon: './Icons/nabozenske/Kamenne_kruhy_Matky_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenné kruhy Matky</a>' },
+      { lat: 2227, lon: 4244, icon: './Icons/nabozenske/Kamenne_kruhy_Matky_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenné kruhy Matky</a>' },
+      { lat: 2731, lon: 3696, icon: './Icons/nabozenske/Kamenne_kruhy_Matky_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenné kruhy Matky</a>' },
+      { lat: 1575, lon: 1996, icon: './Icons/nabozenske/Prastary_Haj_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Prastarý Háj</a>' },
+      { lat: 1947, lon: 1160, icon: './Icons/nabozenske/Kameny_Kruh_Rovnovahy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenný Kruh Rovnováhy</a>' },
+      { lat: 1823, lon: 1620, icon: './Icons/nabozenske/Kameny_Kruh_Rovnovahy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenný Kruh Rovnováhy</a>' },
+      { lat: 1575, lon: 1424, icon: './Icons/nabozenske/Kameny_Kruh_Rovnovahy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenný Kruh Rovnováhy</a>' },
+      { lat: 1255, lon: 2420, icon: './Icons/nabozenske/Kameny_Kruh_Rovnovahy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenný Kruh Rovnováhy</a>' },
+      { lat: 955, lon: 2368, icon:  './Icons/nabozenske/Kameny_Kruh_Rovnovahy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenný Kruh Rovnováhy</a>' },
+      { lat: 1771, lon: 1356, icon: './Icons/nabozenske/Zpivajici_Jeskyne_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Zpívající Jeskyně</a>' },
+      { lat: 1563, lon: 1804, icon: './Icons/nabozenske/Zpivajici_Jeskyne_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Zpívající Jeskyně</a>' },
+      { lat: 1307, lon: 1996, icon: './Icons/nabozenske/Zpivajici_Jeskyne_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Zpívající Jeskyně</a>' },
+      { lat: 1087, lon: 2532, icon: './Icons/nabozenske/Zpivajici_Jeskyne_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Zpívající Jeskyně</a>' },
+      { lat: 1645, lon: 5678, icon: './Icons/nabozenske/Chram_Zare_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Chrám Záře</a>' },
+      { lat: 655, lon: 6020, icon:  './Icons/nabozenske/Slunecni_Ostrov_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Sluneční Ostrov</a>' },
+      { lat: 1628, lon: 6754, icon: './Icons/nabozenske/Haj_Tiche_Mysli_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Háj Tichých Myslí</a>' },
+      { lat: 1471, lon: 6952, icon: './Icons/nabozenske/Bazinne_Prameny_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Bažinné Prameny</a>' },
+      { lat: 1405, lon: 6753, icon: './Icons/nabozenske/Vez_Stareho_Dubu_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Věž Starého Dubu</a>' },
+      { lat: 1630, lon: 7431, icon: './Icons/nabozenske/Kamenne_Kruhavy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenné Kruhavy</a>' },
+      { lat: 1491, lon: 7799, icon: './Icons/nabozenske/Kamenne_Kruhavy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenné Kruhavy</a>' },
+      { lat: 1522, lon: 7535, icon: './Icons/nabozenske/Kamenne_Kruhavy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenné Kruhavy</a>' },
+      { lat: 1393, lon: 7356, icon: './Icons/nabozenske/Kamenne_Kruhavy_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Kamenné Kruhavy</a>' },
+      { lat: 1211, lon: 7866, icon: './Icons/nabozenske/Bazinne_Hvozd_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Bažinné Hvozdy</a>' },
+      { lat: 1603, lon: 7518, icon: './Icons/nabozenske/Bazinne_Hvozd_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Bažinné Hvozdy</a>' },
+      { lat: 1411, lon: 7322, icon: './Icons/nabozenske/Bazinne_Hvozd_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Bažinné Hvozdy</a>' },
+      { lat: 1339, lon: 7556, icon: './Icons/nabozenske/Pramen_Svetlosti_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Pramen Světlosti</a>' },
+      { lat: 2420, lon: 7054, icon: './Icons/nabozenske/Chram_Stribrne_Zare_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Chrám Stříbrné Záře</a>' },
+      { lat: 709, lon: 4114, icon:  './Icons/nabozenske/Zlata_Brana_Monument_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Zlatá Brána</a>' },
+      { lat: 2572, lon: 5944, icon: './Icons/nabozenske/Stribrne_Doly_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Stříbrné Doly</a>' },
+      { lat: 2284, lon: 6000, icon: './Icons/nabozenske/Stribrne_Doly_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Stříbrné Doly</a>' },
+      { lat: 2000, lon: 6100, icon: './Icons/nabozenske/Stribrne_Doly_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Stříbrné Doly</a>' },
+      { lat: 1940, lon: 5944, icon: './Icons/nabozenske/Stribrne_Doly_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Stříbrné Doly</a>' },
+      { lat: 2712, lon: 5940, icon: './Icons/nabozenske/Stribrne_Doly_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Stříbrné Doly</a>' },
+      { lat: 2940, lon: 7408, icon: './Icons/nabozenske/Mesicni_Fontana_icon.jpg', category: 'NabozenskaMista', popup: '<a href="#">Měsíční Fontána</a>' }
+    ];
+
+    markerData.forEach(data => {
+      const icon = L.icon({
+        iconUrl: data.icon,
+        iconSize: [40, 40],
+        iconAnchor: [12, 16],
+        popupAnchor: [0, -20]
+      });
+
+      const marker = L.marker([data.lat, data.lon], { icon: icon })
+        .bindPopup(data.popup);
+
+      marker.category = data.category;
+      marker.addTo(map);
+      markers.push(marker);
+    });
+    
+    // Nastavení omezení zoomu
+    map.setMinZoom(-1.5); // Povolit oddálení více než výchozí úroveň
+    map.setMaxZoom(2);  // Povolit přiblížení na maximální úroveň
+
+
+	window.addEventListener('load', () => {
+	  markers.forEach(marker => {
+		if (marker.category === 'NabozenskaMista') {
+		  map.removeLayer(marker);
+		}
+	  });
+	});
+    // Přepnutí mapy
+    let isMap1Active = true;
+    document.getElementById('toggleMap').addEventListener('click', () => {
+      if (isMap1Active) {
+        map.removeLayer(map1); // Odebrání mapy 1
+        map2.addTo(map);       // Přidání mapy 2
+      } else {
+        map.removeLayer(map2); // Odebrání mapy 2
+        map1.addTo(map);       // Přidání mapy 1
+      }
+      isMap1Active = !isMap1Active;
+    });
+
+document.querySelectorAll('.filter').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        const category = checkbox.dataset.category;
+        const visible = checkbox.checked;
+
+        markers.forEach(marker => {
+          if (marker.category === category) {
+            if (visible) {
+              marker.addTo(map);
+            } else {
+              map.removeLayer(marker);
+            }
+          }
+        });
+      });
+    });
+
+  // Funkce pro zobrazení pozice myši
+    map.on('mousemove', function(event) {
+      const latlng = event.latlng;  // Získání souřadnic
+      document.getElementById('coordinates').innerHTML = `Poloha myši: Lat: ${latlng.lat.toFixed(2)} | Lng: ${latlng.lng.toFixed(2)}`;
+    });
+	
+	map.setMaxBounds(bounds);
+	map.on('drag', function () {
+	  map.panInsideBounds(bounds, { animate: false });
+	});
+	
+	
+	// Přepínání viditelnosti menu
+	const menu = document.getElementById('menu');
+	let menuVisible = false; // Výchozí stav: skryté
+
+	// Přidání tlačítka pro schování/zobrazení menu
+	const toggleMenuButton = document.createElement('button');
+	toggleMenuButton.textContent = '☰';
+	toggleMenuButton.style.position = 'absolute';
+	toggleMenuButton.style.top = '10px';
+	toggleMenuButton.style.right = '20px';
+	toggleMenuButton.style.zIndex = '1000';
+	toggleMenuButton.style.background = '#fff';
+	toggleMenuButton.style.border = '1px solid #ccc';
+	toggleMenuButton.style.padding = '5px 10px';
+	toggleMenuButton.style.cursor = 'pointer';
+	document.body.appendChild(toggleMenuButton);
+
+	// Nastavení animace
+	menu.style.transition = 'transform 0.3s ease-in-out';
+	menu.style.transform = 'translateX(100%)'; // Skryté při načtení
+
+	// Přepínání viditelnosti po kliknutí na tlačítko
+	toggleMenuButton.addEventListener('click', () => {
+	  menuVisible = !menuVisible;
+	  menu.style.transform = menuVisible ? 'translateX(0)' : 'translateX(100%)';
+	});
+
+
+  </script>
+</body>
+</html>
